@@ -24,7 +24,9 @@ class Graph:
         v_id = self.Nodes.index(v)
         #print(f"u_id: {u_id}, v_id: {v_id}")
         #print(f"Peso:{weight}")
+        #print("\n")
         self.G[u_id].append((v_id, weight))
+        
 
     def get_node_label(self, u):
         return self.Nodes[u]

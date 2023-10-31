@@ -135,12 +135,12 @@ for idx, casa in enumerate(casas):
 G = Graph()
 
 # Añadir nodos
-for casa in casas[:50]:
+for casa in casas:
     G.add_node(casa)
 
 # Añadir aristas basadas en comuna y asignar pesos
-for i, casa_u in enumerate(casas[:50]):
-    for j, casa_v in enumerate(casas[:50]):
+for i, casa_u in enumerate(casas):
+    for j, casa_v in enumerate(casas):
         if i != j:  # Evitar agregar bucles
             if casa_u.Comuna() == casa_v.Comuna() or casa_u.Realtor() == casa_v.Realtor() :
                 G.add_edge(casa_u, casa_v)
@@ -162,14 +162,10 @@ for i, casa_u in enumerate(casas[:50]):
 
                 G.add_weighted_edge(casa_u, casa_v, weight)
                 
+#print(f"Se creo el grafo")
+# Graficamos el grafo
+#drawG_al(G, weighted=True, directed=False)
 
-# Llamamos a la función con tu grafo G
-drawG_al(G, weighted=True, directed=False)
-
-'''
-graph = drawG_al_2(G, weighted=True, directed=False, layout="sfdp")
-graph.render("grafocasasChile", format="png")
-'''
 
 
 
