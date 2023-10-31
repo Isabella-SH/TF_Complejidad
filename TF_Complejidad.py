@@ -108,6 +108,7 @@ with open ('Database/database.csv', 'r', encoding='utf-8') as archivo_csv:
         #agrega todos los registros a objetos casas
         casas.append(casa)
 
+
 #imprimir registros
 '''
 for idx, casa in enumerate(casas):
@@ -130,7 +131,8 @@ for idx, casa in enumerate(casas):
         input("Presiona Enter para continuar...")
 '''
    
-                                                                      
+
+                                                                     
                                                                             #CREAR EL GRAFO !!!!!!!!!!!!
 G = Graph()
 
@@ -159,12 +161,70 @@ for i, casa_u in enumerate(casas):
 
                 if casa_u.Parking() == casa_v.Parking():
                     weight -= 2
-
+                #mientras menor sea el peso de la arista quiere decir que los nodos son mas iguales
                 G.add_weighted_edge(casa_u, casa_v, weight)
                 
 #print(f"Se creo el grafo")
 # Graficamos el grafo
 #drawG_al(G, weighted=True, directed=False)
+
+
+def dijkstra(grafo, inicio, precio_min,precio_max, habitaciones_min, habitaciones_max, banos_min, banos_max, comuna, parking):
+    
+    distancias = {nodo: float('inf') for nodo in grafo.obtener_nodos()}
+    distancias[inicio] = 0
+    cola_prioridad = [(0, inicio)]
+    visitados = set()
+
+    while cola_prioridad:
+        _, nodo_actual = heapq.heappop(cola_prioridad)
+        if nodo_actual in visitados:
+            continue
+        visitados.add(nodo_actual)
+
+        for nodo_vecino in grafo.aristas[nodo_actual]:
+            peso = grafo.aristas[nodo_actual][nodo_vecino]
+            distancia_nueva = distancias[nodo_actual] + peso
+            if distancia_nueva < distancias[nodo_vecino]:
+                distancias[nodo_vecino] = distancia_nueva
+                heapq.heappush(cola_prioridad, (distancia_nueva, nodo_vecino))
+
+    # Filtrar los juegos según los criterios especificados
+    casas_filtradas = []
+    
+
+    for casa, distancia in distancias.items():
+        if (
+            precio_min <= casa.Dorms() <= precio_max and
+            #casas_en_rango_precio = [casa for casa in casas if rango_ajustado_precio[0] <= casa.Price_USD() <= rango_ajustado_precio[1]] and
+            habitaciones_min <= casa.Dorms() <= habitaciones_max and
+            banos_min <= casa.Baths() <= banos_max and
+            (comuna == "Todas" or casa.Comuna() == comuna) and
+            (parking == "Todas" or casa.Parking() == parking)
+        ):
+            casas_filtradas.append((casa, distancia))
+
+    return sorted(casas_filtradas, key=lambda x: x[1])[:10]
+
+'''
+resultados = dijkstra(
+    G,
+    inicio, 
+    precio_max, 
+    habitaciones_min, 
+    habitaciones_max, 
+    banos_min, 
+    banos_max, 
+    comuna, 
+    parking
+)
+    '''
+
+
+
+
+
+
 
 
 

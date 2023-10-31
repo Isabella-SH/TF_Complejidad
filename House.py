@@ -1,3 +1,4 @@
+
 class House:
 
     def __init__(self, id, price_clp, price_uf, price_usd, comuna, ubicacion, dorms, baths, built_area, total_area, parking, realtor):
@@ -59,3 +60,4 @@ precio_en_clp = casa.Price_CLP()
 print(f"Precio en CLP: {precio_en_clp}")
 
 '''
+
