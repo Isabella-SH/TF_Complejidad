@@ -4,6 +4,9 @@ from Graph import Graph, drawG_al, drawG_al_2
 from House import House
 import matplotlib.pyplot as plt
 import graphviz as gv
+import heapq
+from collections import deque
+
 
 
 
@@ -144,7 +147,7 @@ for casa in casas:
 for i, casa_u in enumerate(casas):
     for j, casa_v in enumerate(casas):
         if i != j:  # Evitar agregar bucles
-            if casa_u.Comuna() == casa_v.Comuna() or casa_u.Realtor() == casa_v.Realtor() :
+            if casa_u.Comuna() == casa_v.Comuna() :
                 G.add_edge(casa_u, casa_v)
 
                 # Inicializar weight
@@ -168,9 +171,10 @@ for i, casa_u in enumerate(casas):
 # Graficamos el grafo
 #drawG_al(G, weighted=True, directed=False)
 
+'''
 
-def dijkstra(grafo, inicio, precio_min,precio_max, habitaciones_min, habitaciones_max, banos_min, banos_max, comuna, parking):
-    
+def dijkstra(grafo, inicio, precio_min, precio_max, habitaciones_min, habitaciones_max, banos_min, banos_max, comuna, parking):
+
     distancias = {nodo: float('inf') for nodo in grafo.obtener_nodos()}
     distancias[inicio] = 0
     cola_prioridad = [(0, inicio)]
@@ -182,43 +186,134 @@ def dijkstra(grafo, inicio, precio_min,precio_max, habitaciones_min, habitacione
             continue
         visitados.add(nodo_actual)
 
-        for nodo_vecino in grafo.aristas[nodo_actual]:
-            peso = grafo.aristas[nodo_actual][nodo_vecino]
+        for nodo_vecino, peso in grafo.get_edges(nodo_actual):
             distancia_nueva = distancias[nodo_actual] + peso
             if distancia_nueva < distancias[nodo_vecino]:
                 distancias[nodo_vecino] = distancia_nueva
                 heapq.heappush(cola_prioridad, (distancia_nueva, nodo_vecino))
 
-    # Filtrar los juegos según los criterios especificados
+    # Filtrar las casas según los criterios especificados
     casas_filtradas = []
-    
 
     for casa, distancia in distancias.items():
         if (
-            precio_min <= casa.Dorms() <= precio_max and
-            #casas_en_rango_precio = [casa for casa in casas if rango_ajustado_precio[0] <= casa.Price_USD() <= rango_ajustado_precio[1]] and
+            precio_min <= casa.Price_USD() <= precio_max and
             habitaciones_min <= casa.Dorms() <= habitaciones_max and
             banos_min <= casa.Baths() <= banos_max and
             (comuna == "Todas" or casa.Comuna() == comuna) and
-            (parking == "Todas" or casa.Parking() == parking)
+            casa.Parking() == parking
         ):
             casas_filtradas.append((casa, distancia))
 
     return sorted(casas_filtradas, key=lambda x: x[1])[:10]
 
-'''
+
+
 resultados = dijkstra(
     G,
-    inicio, 
-    precio_max, 
-    habitaciones_min, 
-    habitaciones_max, 
-    banos_min, 
-    banos_max, 
-    comuna, 
-    parking
+    10, 
+    90000,
+    100000, 
+    1, 
+    4, 
+    1, 
+    1, 
+    "MaipÃº",
+    1
 )
-    '''
+'''
+
+# Definimos la función de Dijkstra
+def dijkstra(grafo, inicio, precio_min, precio_max, habitaciones_min, habitaciones_max, banos_min, banos_max, comuna, parking):
+
+    distancias = {nodo: float('inf') for nodo in grafo.obtener_nodos()}
+    distancias[inicio] = 0
+    cola_prioridad = [(0, inicio)]
+    visitados = set()
+
+    while cola_prioridad:
+        _, nodo_actual = heapq.heappop(cola_prioridad)
+        if nodo_actual in visitados:
+            continue
+        visitados.add(nodo_actual)
+
+        for nodo_vecino, peso in grafo.get_edges(nodo_actual):
+            distancia_nueva = distancias[nodo_actual] + peso
+            if distancia_nueva < distancias[nodo_vecino]:
+                distancias[nodo_vecino] = distancia_nueva
+                heapq.heappush(cola_prioridad, (distancia_nueva, nodo_vecino))
+
+    # Filtrar las casas según los criterios especificados
+    casas_filtradas = []
+
+    for casa, distancia in distancias.items():
+        if (
+            precio_min <= casa.Price_USD <= precio_max and
+            habitaciones_min <= casa.Dorms <= habitaciones_max and
+            banos_min <= casa.Baths <= banos_max and
+            (comuna == "Todas" or casa.Comuna == comuna) and
+            casa.Parking == parking
+        ):
+            casas_filtradas.append((casa, distancia))
+
+    return sorted(casas_filtradas, key=lambda x: x[1])[:10]
+
+# Definimos una función para obtener las recomendaciones y mostrar resultados
+def obtener_recomendaciones():
+    global inicio
+
+    # Obtener el nombre de la comuna de inicio desde la interfaz
+    comuna_inicio = "Estación Central"
+
+    # Buscar la comuna de inicio en el grafo
+    inicio = None
+    for casa in casas:
+        if casa.Comuna() == comuna_inicio:
+            inicio = casa
+            break
+
+    # Verificar si se encontró la comuna de inicio
+    if inicio is None:
+        # Mostrar un mensaje en la interfaz indicando que la comuna no se encuentra en el grafo
+        print("No se encontró el inicio")
+    else:
+        recomendaciones = dijkstra(
+            G,
+            inicio,  # Cambiado a 'inicio'
+            90000,
+            100000, 
+            1, 
+            4, 
+            1, 
+            1, 
+            "Maipú",
+            1
+        )
+        print(recomendaciones)
+
+        
+#obtengo las recomendaciones
+obtener_recomendaciones()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

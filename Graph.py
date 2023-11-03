@@ -33,6 +33,9 @@ class Graph:
 
     def get_edges(self, u):
         return self.G[u]
+    
+    def obtener_nodos(self):
+        return self.Nodes
 
     def num_nodes(self):
         return len(self.Vertices)
