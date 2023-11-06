@@ -12,7 +12,6 @@ from Grafo import Grafo
 import os
 import csv
 
-#casas_cercanas = []
 inicio = None
 imagen_grafico = None
 nro_resultados_casas = 0
@@ -217,26 +216,109 @@ with open ('Database/database.csv', 'r', encoding='utf-8') as archivo_csv:
 #print(grafo)
 
 #print("Resultados de las recomendaciones\n\n")
-obtener_recomendaciones()
+#obtener_recomendaciones()
+
+def get_recommendations():
+    comuna = comuna_entry.get()
+    realtor = realtor_entry.get()
+    price_min = int(price_min_entry.get())
+    price_max = int(price_max_entry.get())
+    bedrooms = int(bedrooms_entry.get())
+    bathrooms = int(bathrooms_entry.get())
+    parking = int(parking_entry.get())
+    
+    inicio = None
+    for nodo in grafo.nodos:
+        if grafo.nodos[nodo]['comuna'] == comuna:
+            inicio = nodo
+            break
+
+    recommendations = dijkstra(grafo, inicio, comuna, realtor, price_min, price_max, bedrooms, bathrooms, parking)
+    
+    for item in results_treeview.get_children():
+        results_treeview.delete(item)
+    
+    for i, (casa, distancia) in enumerate(recommendations):
+        casa_data = [
+            i + 1, 
+            grafo.nodos[casa]['comuna'],
+            grafo.nodos[casa]['realtor'],
+            grafo.nodos[casa]['price_usd'],
+            grafo.nodos[casa]['dorms'],
+            grafo.nodos[casa]['baths'],
+            grafo.nodos[casa]['parking'],
+            distancia
+        ]
+        results_treeview.insert('', 'end', values=casa_data)
 
 
+root = tk.Tk()
+root.title("Departamento Ideal")
 
 
+input_frame = ttk.LabelFrame(root, text="Preferencias")
+input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 
+comuna_label = ttk.Label(input_frame, text="Comuna:")
+comuna_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+comuna_entry = ttk.Entry(input_frame)
+comuna_entry.grid(row=0, column=1, padx=5, pady=5)
+
+realtor_label = ttk.Label(input_frame, text="Realtor:")
+realtor_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+realtor_entry = ttk.Entry(input_frame)
+realtor_entry.grid(row=1, column=1, padx=5, pady=5)
+
+price_range_label = ttk.Label(input_frame, text="Price Range (USD):")
+price_range_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+price_min_entry = ttk.Entry(input_frame)
+price_min_entry.grid(row=2, column=1, padx=5, pady=5)
+price_max_entry = ttk.Entry(input_frame)
+price_max_entry.grid(row=2, column=2, padx=5, pady=5)
+
+bedrooms_label = ttk.Label(input_frame, text="Bedrooms:")
+bedrooms_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+bedrooms_entry = ttk.Entry(input_frame)
+bedrooms_entry.grid(row=3, column=1, padx=5, pady=5)
+
+bathrooms_label = ttk.Label(input_frame, text="Bathrooms:")
+bathrooms_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+bathrooms_entry = ttk.Entry(input_frame)
+bathrooms_entry.grid(row=4, column=1, padx=5, pady=5)
+
+parking_label = ttk.Label(input_frame, text="Parking Spaces:")
+parking_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
+parking_entry = ttk.Entry(input_frame)
+parking_entry.grid(row=5, column=1, padx=5, pady=5)
 
 
+recommend_button = ttk.Button(input_frame, text="Obtener recomendaciones", command=get_recommendations)
+recommend_button.grid(row=6, columnspan=3, pady=10)
+
+results_frame = ttk.LabelFrame(root, text="Recomendacion")
+results_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
 
+results_treeview = ttk.Treeview(results_frame, columns=("Index", "Comuna", "Realtor", "Price (USD)", "Bedrooms", "Bathrooms", "Parking", "Distance"))
+results_treeview.heading("#1", text="Index")
+results_treeview.heading("#2", text="Comuna")
+results_treeview.heading("#3", text="Realtor")
+results_treeview.heading("#4", text="Price (USD)")
+results_treeview.heading("#5", text="Bedrooms")
+results_treeview.heading("#6", text="Bathrooms")
+results_treeview.heading("#7", text="Parking")
+results_treeview.heading("#8", text="Distance")
+results_treeview.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 
+scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=results_treeview.yview)
+scrollbar.grid(row=0, column=1, sticky="ns")
+results_treeview.configure(yscrollcommand=scrollbar.set)
 
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+results_frame.columnconfigure(0, weight=1)
+results_frame.rowconfigure(0, weight=1)
 
-
-
-
-
-
-
-
-
+root.mainloop()
