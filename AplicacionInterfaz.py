@@ -43,39 +43,36 @@ def dijkstra(grafo, inicio,comuna,realtor, precio_min, precio_max, dorms_min, ba
     for casa, distancia in distancias.items():
         
         if comuna == "Todos" or grafo.nodos[casa]['comuna'] == comuna:
-            
-            if realtor == "Todos" or grafo.nodos[casa]['realtor'] == realtor: #luego el realtor
-                
-                precio = int(grafo.nodos[casa]['price_usd']) 
-                if precio_min <= precio <= precio_max:                         #rango de precios   
-                    
-                    dormitorios=int(grafo.nodos[casa]['dorms']) 
-                    if dorms_min<= dormitorios:                                  #dormitorios
-                        
-                        banos=int(grafo.nodos[casa]['baths']) 
-                        if baths_min<= banos:                                      #baños
-                            
-                            parking=int(grafo.nodos[casa]['parking']) 
-                            if parking_min<=parking:                              #parking
-                                
+
+            if not realtor or realtor == "Todos" or grafo.nodos[casa]['realtor'] == realtor:  # luego el realtor
+
+                precio = int(grafo.nodos[casa]['price_usd']) if grafo.nodos[casa]['price_usd'] else 0
+                if (precio_min == "" or precio_min <= precio) and (precio_max == "" or precio <= precio_max):  # rango de precios
+
+                    dormitorios = int(grafo.nodos[casa]['dorms']) if grafo.nodos[casa]['dorms'] else 0
+                    if (dorms_min == "" or dorms_min <= dormitorios):  # dormitorios
+
+                        banos = int(grafo.nodos[casa]['baths']) if grafo.nodos[casa]['baths'] else 0
+                        if (baths_min == "" or baths_min <= banos):  # baños
+
+                            parking = int(grafo.nodos[casa]['parking']) if grafo.nodos[casa]['parking'] else 0
+                            if (parking_min == "" or parking_min <= parking):  # parking
+
                                 casas_filtradas.append((casa, distancia))
-                              
+                
     return casas_filtradas[:20] #retorna los 20 elementos
 
 def obtener_recomendaciones():
     
-    global nro_resultados_casas
-
     #comuna es para calcular el nodo inicio
-    # Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones, baños y parking
+    #Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones min, baños min y parking min
     comuna_deseada = "LoBarnechea"
-    realtor_deseado = "OSSANDON CORREDORES ASOCIADOS S.A."
+    realtor_deseado = ""
     precio_minimo_deseado = 1000
-    precio_maximo_deseado = 10000
-    habitaciones_min_deseadas=1
-    banos_min_deseados=1
-    parking_min_deseado=1
-    nro_resultados_casas = 5
+    precio_maximo_deseado = 10000000
+    habitaciones_min_deseadas=0
+    banos_min_deseados= 0
+    parking_min_deseado= 0
     
     global casas_cercanas
     global inicio
@@ -96,19 +93,19 @@ def obtener_recomendaciones():
         #print("Imprimir el arreglo")
         #print(casas_cercanas)
         #print("Antes de mostrar los resultados")
-        mostrar_resultados(casas_cercanas, comuna_deseada, nro_resultados_casas)
+        mostrar_resultados(casas_cercanas, comuna_deseada)
 
 
 
 # Función para mostrar los casas recomendados como "cards"
-def mostrar_resultados(casas_cercanas, comuna_inicio, nro_resultados_casas):
+def mostrar_resultados(casas_cercanas, comuna_inicio):
 
-    print(f"Las {nro_resultados_casas} casas mas recomendadas en relacion a la comuna {comuna_inicio}:\n")
+    print(f"Las casas mas recomendadas en relacion a la comuna {comuna_inicio}:\n")
     
     print(casas_cercanas)
     print("\n")
 
-    for i, (casa, distancia) in enumerate(casas_cercanas[:nro_resultados_casas]):
+    for i, (casa, distancia) in enumerate(casas_cercanas):
 
     #comuna es para calcular el nodo inicio
     # Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones, baños y parking
