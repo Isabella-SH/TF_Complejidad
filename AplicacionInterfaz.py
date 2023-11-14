@@ -17,7 +17,7 @@ imagen_grafico = None
 nro_resultados_casas = 0
 
 
-def dijkstra(grafo, inicio,comuna,realtor, precio_min, precio_max, dorms, baths, parking):
+def dijkstra(grafo, inicio,comuna,realtor, precio_min, precio_max, dorms_min, baths_min, parking_min):
     distancias = {nodo: float('inf') for nodo in grafo.obtener_nodos()}
     distancias[inicio] = 0
     cola_prioridad = [(0, inicio)]
@@ -41,13 +41,23 @@ def dijkstra(grafo, inicio,comuna,realtor, precio_min, precio_max, dorms, baths,
     casas_filtradas = []
         
     for casa, distancia in distancias.items():
+        
         if comuna == "Todos" or grafo.nodos[casa]['comuna'] == comuna:
+            
             if realtor == "Todos" or grafo.nodos[casa]['realtor'] == realtor: #luego el realtor
+                
                 precio = int(grafo.nodos[casa]['price_usd']) 
-                if precio_min <= precio <= precio_max:                         #rango de precios                    
-                    if int(grafo.nodos[casa]['dorms']) == dorms:                #dormitorios
-                        if int(grafo.nodos[casa]['baths']) == baths:             #baños
-                            if int(grafo.nodos[casa]['parking']) == parking:      #parking
+                if precio_min <= precio <= precio_max:                         #rango de precios   
+                    
+                    dormitorios=int(grafo.nodos[casa]['dorms']) 
+                    if dorms_min<= dormitorios:                                  #dormitorios
+                        
+                        banos=int(grafo.nodos[casa]['baths']) 
+                        if baths_min<= banos:                                      #baños
+                            
+                            parking=int(grafo.nodos[casa]['parking']) 
+                            if parking_min<=parking:                              #parking
+                                
                                 casas_filtradas.append((casa, distancia))
                               
     return casas_filtradas[:20] #retorna los 20 elementos
@@ -58,14 +68,13 @@ def obtener_recomendaciones():
 
     #comuna es para calcular el nodo inicio
     # Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones, baños y parking
-    id_inicio=8493024
-    comuna_deseada = "QuintaNormal"
-    realtor_deseado = "Paula Vivanco Arenas"
-    precio_minimo_deseado = 100000
-    precio_maximo_deseado = 600000
-    habitaciones_deseadas=4
-    banos_deseados=1
-    parking_deseado=2
+    comuna_deseada = "LoBarnechea"
+    realtor_deseado = "OSSANDON CORREDORES ASOCIADOS S.A."
+    precio_minimo_deseado = 1000
+    precio_maximo_deseado = 10000
+    habitaciones_min_deseadas=1
+    banos_min_deseados=1
+    parking_min_deseado=1
     nro_resultados_casas = 5
     
     global casas_cercanas
@@ -83,7 +92,7 @@ def obtener_recomendaciones():
         print("la casa inicio no se encontro en el grafo")
     else:
         # Utilizar el algoritmo de Dijkstra para encontrar las distancias y filtrar por comuna
-        casas_cercanas = dijkstra(grafo, inicio, comuna_deseada,realtor_deseado, precio_minimo_deseado,precio_maximo_deseado,habitaciones_deseadas,banos_deseados,parking_deseado)
+        casas_cercanas = dijkstra(grafo, inicio, comuna_deseada,realtor_deseado, precio_minimo_deseado,precio_maximo_deseado,habitaciones_min_deseadas,banos_min_deseados,parking_min_deseado)
         #print("Imprimir el arreglo")
         #print(casas_cercanas)
         #print("Antes de mostrar los resultados")
@@ -216,109 +225,109 @@ with open ('Database/database.csv', 'r', encoding='utf-8') as archivo_csv:
 #print(grafo)
 
 #print("Resultados de las recomendaciones\n\n")
-#obtener_recomendaciones()
+obtener_recomendaciones()
 
-def get_recommendations():
-    comuna = comuna_entry.get()
-    realtor = realtor_entry.get()
-    price_min = int(price_min_entry.get())
-    price_max = int(price_max_entry.get())
-    bedrooms = int(bedrooms_entry.get())
-    bathrooms = int(bathrooms_entry.get())
-    parking = int(parking_entry.get())
+# def get_recommendations():
+#     comuna = comuna_entry.get()
+#     realtor = realtor_entry.get()
+#     price_min = int(price_min_entry.get())
+#     price_max = int(price_max_entry.get())
+#     bedrooms = int(bedrooms_entry.get())
+#     bathrooms = int(bathrooms_entry.get())
+#     parking = int(parking_entry.get())
     
-    inicio = None
-    for nodo in grafo.nodos:
-        if grafo.nodos[nodo]['comuna'] == comuna:
-            inicio = nodo
-            break
+#     inicio = None
+#     for nodo in grafo.nodos:
+#         if grafo.nodos[nodo]['comuna'] == comuna:
+#             inicio = nodo
+#             break
 
-    recommendations = dijkstra(grafo, inicio, comuna, realtor, price_min, price_max, bedrooms, bathrooms, parking)
+#     recommendations = dijkstra(grafo, inicio, comuna, realtor, price_min, price_max, bedrooms, bathrooms, parking)
     
-    for item in results_treeview.get_children():
-        results_treeview.delete(item)
+#     for item in results_treeview.get_children():
+#         results_treeview.delete(item)
     
-    for i, (casa, distancia) in enumerate(recommendations):
-        casa_data = [
-            i + 1, 
-            grafo.nodos[casa]['comuna'],
-            grafo.nodos[casa]['realtor'],
-            grafo.nodos[casa]['price_usd'],
-            grafo.nodos[casa]['dorms'],
-            grafo.nodos[casa]['baths'],
-            grafo.nodos[casa]['parking'],
-            distancia
-        ]
-        results_treeview.insert('', 'end', values=casa_data)
+#     for i, (casa, distancia) in enumerate(recommendations):
+#         casa_data = [
+#             i + 1, 
+#             grafo.nodos[casa]['comuna'],
+#             grafo.nodos[casa]['realtor'],
+#             grafo.nodos[casa]['price_usd'],
+#             grafo.nodos[casa]['dorms'],
+#             grafo.nodos[casa]['baths'],
+#             grafo.nodos[casa]['parking'],
+#             distancia
+#         ]
+#         results_treeview.insert('', 'end', values=casa_data)
 
 
-root = tk.Tk()
-root.title("Departamento Ideal")
+# root = tk.Tk()
+# root.title("Departamento Ideal")
 
 
-input_frame = ttk.LabelFrame(root, text="Preferencias")
-input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+# input_frame = ttk.LabelFrame(root, text="Preferencias")
+# input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
 
-comuna_label = ttk.Label(input_frame, text="Comuna:")
-comuna_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-comuna_entry = ttk.Entry(input_frame)
-comuna_entry.grid(row=0, column=1, padx=5, pady=5)
+# comuna_label = ttk.Label(input_frame, text="Comuna:")
+# comuna_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
+# comuna_entry = ttk.Entry(input_frame)
+# comuna_entry.grid(row=0, column=1, padx=5, pady=5)
 
-realtor_label = ttk.Label(input_frame, text="Realtor:")
-realtor_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-realtor_entry = ttk.Entry(input_frame)
-realtor_entry.grid(row=1, column=1, padx=5, pady=5)
+# realtor_label = ttk.Label(input_frame, text="Realtor:")
+# realtor_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+# realtor_entry = ttk.Entry(input_frame)
+# realtor_entry.grid(row=1, column=1, padx=5, pady=5)
 
-price_range_label = ttk.Label(input_frame, text="Price Range (USD):")
-price_range_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-price_min_entry = ttk.Entry(input_frame)
-price_min_entry.grid(row=2, column=1, padx=5, pady=5)
-price_max_entry = ttk.Entry(input_frame)
-price_max_entry.grid(row=2, column=2, padx=5, pady=5)
+# price_range_label = ttk.Label(input_frame, text="Price Range (USD):")
+# price_range_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+# price_min_entry = ttk.Entry(input_frame)
+# price_min_entry.grid(row=2, column=1, padx=5, pady=5)
+# price_max_entry = ttk.Entry(input_frame)
+# price_max_entry.grid(row=2, column=2, padx=5, pady=5)
 
-bedrooms_label = ttk.Label(input_frame, text="Bedrooms:")
-bedrooms_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-bedrooms_entry = ttk.Entry(input_frame)
-bedrooms_entry.grid(row=3, column=1, padx=5, pady=5)
+# bedrooms_label = ttk.Label(input_frame, text="Bedrooms:")
+# bedrooms_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+# bedrooms_entry = ttk.Entry(input_frame)
+# bedrooms_entry.grid(row=3, column=1, padx=5, pady=5)
 
-bathrooms_label = ttk.Label(input_frame, text="Bathrooms:")
-bathrooms_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
-bathrooms_entry = ttk.Entry(input_frame)
-bathrooms_entry.grid(row=4, column=1, padx=5, pady=5)
+# bathrooms_label = ttk.Label(input_frame, text="Bathrooms:")
+# bathrooms_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+# bathrooms_entry = ttk.Entry(input_frame)
+# bathrooms_entry.grid(row=4, column=1, padx=5, pady=5)
 
-parking_label = ttk.Label(input_frame, text="Parking Spaces:")
-parking_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
-parking_entry = ttk.Entry(input_frame)
-parking_entry.grid(row=5, column=1, padx=5, pady=5)
-
-
-recommend_button = ttk.Button(input_frame, text="Obtener recomendaciones", command=get_recommendations)
-recommend_button.grid(row=6, columnspan=3, pady=10)
-
-results_frame = ttk.LabelFrame(root, text="Recomendacion")
-results_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+# parking_label = ttk.Label(input_frame, text="Parking Spaces:")
+# parking_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
+# parking_entry = ttk.Entry(input_frame)
+# parking_entry.grid(row=5, column=1, padx=5, pady=5)
 
 
-results_treeview = ttk.Treeview(results_frame, columns=("Index", "Comuna", "Realtor", "Price (USD)", "Bedrooms", "Bathrooms", "Parking", "Distance"))
-results_treeview.heading("#1", text="Index")
-results_treeview.heading("#2", text="Comuna")
-results_treeview.heading("#3", text="Realtor")
-results_treeview.heading("#4", text="Price (USD)")
-results_treeview.heading("#5", text="Bedrooms")
-results_treeview.heading("#6", text="Bathrooms")
-results_treeview.heading("#7", text="Parking")
-results_treeview.heading("#8", text="Distance")
-results_treeview.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+# recommend_button = ttk.Button(input_frame, text="Obtener recomendaciones", command=get_recommendations)
+# recommend_button.grid(row=6, columnspan=3, pady=10)
+
+# results_frame = ttk.LabelFrame(root, text="Recomendacion")
+# results_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
 
-scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=results_treeview.yview)
-scrollbar.grid(row=0, column=1, sticky="ns")
-results_treeview.configure(yscrollcommand=scrollbar.set)
+# results_treeview = ttk.Treeview(results_frame, columns=("Index", "Comuna", "Realtor", "Price (USD)", "Bedrooms", "Bathrooms", "Parking", "Distance"))
+# results_treeview.heading("#1", text="Index")
+# results_treeview.heading("#2", text="Comuna")
+# results_treeview.heading("#3", text="Realtor")
+# results_treeview.heading("#4", text="Price (USD)")
+# results_treeview.heading("#5", text="Bedrooms")
+# results_treeview.heading("#6", text="Bathrooms")
+# results_treeview.heading("#7", text="Parking")
+# results_treeview.heading("#8", text="Distance")
+# results_treeview.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-results_frame.columnconfigure(0, weight=1)
-results_frame.rowconfigure(0, weight=1)
 
-root.mainloop()
+# scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=results_treeview.yview)
+# scrollbar.grid(row=0, column=1, sticky="ns")
+# results_treeview.configure(yscrollcommand=scrollbar.set)
+
+# root.columnconfigure(0, weight=1)
+# root.rowconfigure(0, weight=1)
+# results_frame.columnconfigure(0, weight=1)
+# results_frame.rowconfigure(0, weight=1)
+
+# root.mainloop()
