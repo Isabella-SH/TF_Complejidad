@@ -3,7 +3,7 @@ class Grafo:
         self.nodos = {}
         self.aristas = {}
 
-    def agregar_nodo(self, price_clp=None,price_uf=None,price_usd=None,comuna=None,ubicacion=None,dorms=None,baths=None,built_area=None,total_area=None,parking=None,id=None,realtor=None):
+    def agregar_nodo(self, price_clp=None,price_uf=None,price_usd=None,comuna=None,ubicacion=None,dorms=None,baths=None,built_area=None,total_area=None,parking=None,id=None,realtor=None, desc=None):   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         self.nodos[id] = {
             'id':id,
             'price_clp': price_clp,
@@ -16,7 +16,8 @@ class Grafo:
             'built_area':built_area,
             'total_area':total_area,
             'parking':parking,
-            'realtor':realtor
+            'realtor':realtor,
+            'desc':desc                                                                                                                                                                                  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
         self.aristas[id] = {}
 
