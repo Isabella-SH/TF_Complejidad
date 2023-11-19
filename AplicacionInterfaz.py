@@ -4,6 +4,7 @@ from tkinter import font
 import tkinter as tk
 from tkinter import ttk
 import networkx as nx
+from tkinter import messagebox
 import matplotlib.pyplot as plt
 from PIL import Image, ImageTk
 from Grafo import Grafo
@@ -291,144 +292,119 @@ with open ('Database/database.csv', 'r', encoding='utf-8') as archivo_csv:
           if peso < 11 and peso > 0:
             grafo.agregar_arista(id, nodo, peso)
 
-#el grafo esta lleno
+
 #print(grafo)
-
 #print("Resultados de las recomendaciones\n\n")
-obtener_recomendaciones()
+#obtener_recomendaciones()
 
-
-# def mostrar_fachada_aleatoria():
+def mostrar_fachada_aleatoria():
   
-#     todas_las_casas = list(grafo.obtener_nodos())
+     todas_las_casas = list(grafo.obtener_nodos())
 
-#     casa_aleatoria = random.choice(todas_las_casas)
-#     ruta_imagen = f"imagenes_fachadas/fachada_{casa_aleatoria}.jpg"
+     casa_aleatoria = random.choice(todas_las_casas)
+     ruta_imagen = f"imagenes_fachadas/fachada_{casa_aleatoria}.jpg"
 
-#     ventana_fachada = tk.Toplevel(root)
-#     ventana_fachada.title("Fachada de Casa Aleatoria")
-#     imagen = Image.open(ruta_imagen)
-#     imagen_tk = ImageTk.PhotoImage(imagen)
-#     label = tk.Label(ventana_fachada, image=imagen_tk)
-#     label.pack()
-#     boton_cerrar = tk.Button(ventana_fachada, text="Cerrar", command=lambda: cerrar_ventana(ventana_fachada))
-#     boton_cerrar.pack()
+     ventana_fachada = tk.Toplevel(root)
+     ventana_fachada.title("Fachada de Casa Aleatoria")
+     imagen = Image.open(ruta_imagen)
+     imagen_tk = ImageTk.PhotoImage(imagen)
+     label = tk.Label(ventana_fachada, image=imagen_tk)
+     label.pack()
+     boton_cerrar = tk.Button(ventana_fachada, text="Cerrar", command=lambda: cerrar_ventana(ventana_fachada))
+     boton_cerrar.pack()
 
-# def cerrar_ventana(ventana):
-#     ventana.destroy()
+def cerrar_ventana(ventana):
+     ventana.destroy()
+     
+root = tk.Tk()
+root.title("Recomendador de Casas")
+  
+def get_recommendations():
+     comuna = comuna_var.get()
+     realtor = realtor_var.get()
+     price_min = int(price_min_entry.get())
+     price_max = int(price_max_entry.get())
+     bedrooms = int(bedrooms_var.get())
+     bathrooms = int(bathrooms_var.get())
+     parking = int(parking_var.get())
     
-# def get_recommendations():
-#     comuna = comuna_var.get()
-#     realtor = realtor_var.get()
-#     price_min = int(price_min_entry.get())
-#     price_max = int(price_max_entry.get())
-#     bedrooms = int(bedrooms_var.get())
-#     bathrooms = int(bathrooms_var.get())
-#     parking = int(parking_var.get())
+     inicio = None
+     for nodo in grafo.nodos:
+         if grafo.nodos[nodo]['comuna'] == comuna:
+             inicio = nodo
+             break
+
+     recommendations = dijkstra(grafo, inicio, comuna, realtor, price_min, price_max, bedrooms, bathrooms, parking)
     
-#     inicio = None
-#     for nodo in grafo.nodos:
-#         if grafo.nodos[nodo]['comuna'] == comuna:
-#             inicio = nodo
-#             break
+     # Elimina todas las filas actuales en el Treeview
+     for item in treeview.get_children():
+        treeview.delete(item)
 
-#     recommendations = dijkstra(grafo, inicio, comuna, realtor, price_min, price_max, bedrooms, bathrooms, parking)
-    
-#     for item in results_treeview.get_children():
-#         results_treeview.delete(item)
-    
-#     for i, (casa, distancia) in enumerate(recommendations):
-#         casa_data = [
-#             i + 1, 
-#             grafo.nodos[casa]['comuna'],
-#             grafo.nodos[casa]['realtor'],
-#             grafo.nodos[casa]['price_usd'],
-#             grafo.nodos[casa]['dorms'],
-#             grafo.nodos[casa]['baths'],
-#             grafo.nodos[casa]['parking'],
-#             distancia
-#         ]
-#         results_treeview.insert('', 'end', values=casa_data)
+     for i, (casa, distancia) in enumerate(recommendations):
+         casa_data = [
+             i + 1, 
+             grafo.nodos[casa]['comuna'],
+             grafo.nodos[casa]['realtor'],
+             grafo.nodos[casa]['price_usd'],
+             grafo.nodos[casa]['dorms'],
+             grafo.nodos[casa]['baths'],
+             grafo.nodos[casa]['parking'],
+             grafo.nodos[casa]['total_area'],  
+             grafo.nodos[casa]['desc'],  
+             distancia
+         ]
+         treeview.insert('', 'end', values=casa_data)
 
+# Crear el widget Treeview para mostrar las recomendaciones
+columns = ('#', 'Comuna', 'Realtor', 'Precio USD', 'Dormitorios', 'Banos', 'Estacionamientos', 'Distancia')
+treeview = ttk.Treeview(root, columns=columns, show='headings')
 
-# root = tk.Tk()
-# root.title("Departamento Ideal")
+# Configurar las columnas
+for col in columns:
+    treeview.heading(col, text=col)
 
-
-# input_frame = ttk.LabelFrame(root, text="Preferencias")
-# input_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+treeview.grid(row=9, column=0, columnspan=2)
 
 
-# comuna_label = ttk.Label(input_frame, text="Comuna:")
-# comuna_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
-# comuna_options = ["Vitacura", "Las Condes", "Providencia", "Santiago"]
-# comuna_var = tk.StringVar(value=comuna_options[0])
-# comuna_entry = ttk.Combobox(input_frame, textvariable=comuna_var, values=comuna_options)
-# comuna_entry.grid(row=0, column=1, padx=5, pady=5)
+comuna_var = tk.StringVar()
+realtor_var = tk.StringVar()
+bedrooms_var = tk.StringVar()
+bathrooms_var = tk.StringVar()
+parking_var = tk.StringVar()
 
-# realtor_label = ttk.Label(input_frame, text="Realtor:")
-# realtor_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-# realtor_options = ["Realtor1", "Realtor2", "Realtor3", "Realtor4"]
-# realtor_var = tk.StringVar(value=realtor_options[-1])
-# realtor_entry = ttk.Combobox(input_frame, textvariable=realtor_var, values=realtor_options)
-# realtor_entry.grid(row=1, column=1, padx=5, pady=5)
+# Etiquetas y entradas para las opciones del usuario
+tk.Label(root, text="Comuna:").grid(row=0, column=0)
+comuna_entry = ttk.Combobox(root, textvariable=comuna_var, values=["LoBarnechea","Vitacura","PuenteAlto", "LasCondes", "QuintaNormal","PedroAguirreCerda", "EstacionCentral", "Colina","LaFlorida", "SanBernardo","Santiago", "LasCondes", "Lampa", "Quilicura","Santiago","SanBernardo","PadreHurtado","Buin","Recoleta"])
+comuna_entry.grid(row=0, column=1)
 
-# price_range_label = ttk.Label(input_frame, text="Price Range (USD):")
-# price_range_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-# price_min_entry = ttk.Entry(input_frame)
-# price_min_entry.grid(row=2, column=1, padx=5, pady=5)
-# price_max_entry = ttk.Entry(input_frame)
-# price_max_entry.grid(row=2, column=2, padx=5, pady=5)
+tk.Label(root, text="Realtor:").grid(row=1, column=0)
+realtor_entry = ttk.Combobox(root, textvariable=realtor_var, values=["Viel la Dehesa SPA","Viel Propiedades dos Ltda","Schumacher Propiedades","OSSANDON CORREDORES ASOCIADOS S.A","Easyprop","Lyon y Balmaceda Ltda.","Bofill y Asociados Ltda","Nieto & Stone Propiedades","Invistus Spa","Unne","Hobbins Vitacura","Welink Propiedades SpA","Vidal Riedel Propiedades - Las Condes","Nexxos","Mocahome Corredores Integrados","Manterola Propiedades","Tzani Propiedades","Legale y Propiedades Spa", "Propiedadesrs", "Patricia Gajardo propiedades", "Todo Propiedades","Paula Vivanco Arenas", "Fe Propiedades Spa", "Ecorredores Getion Inmobiliaria","Behouse", "Propital", "Cgs Corretaje Inmobiliario Spa", "Giordano Propiedades"])
+realtor_entry.grid(row=1, column=1)
 
-# bedrooms_label = ttk.Label(input_frame, text="Bedrooms:")
-# bedrooms_label.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-# bedrooms_options = ["0", "1", "2", "3", "4", "5", "6"]
-# bedrooms_var = tk.StringVar(value=bedrooms_options[0])
-# bedrooms_entry = ttk.Combobox(input_frame, textvariable=bedrooms_var, values=bedrooms_options)
-# bedrooms_entry.grid(row=3, column=1, padx=5, pady=5)
+tk.Label(root, text="Precio Minimo:").grid(row=2, column=0)
+price_min_entry = tk.Entry(root, validate="key", validatecommand=(root.register(lambda char: char.isdigit() or char == ""), "%S"))
+price_min_entry.grid(row=2, column=1)
 
-# bathrooms_label = ttk.Label(input_frame, text="Bathrooms:")
-# bathrooms_label.grid(row=4, column=0, padx=5, pady=5, sticky="w")
-# bathrooms_options = ["0", "1", "2", "3", "4", "5"] 
-# bathrooms_var = tk.StringVar(value=bathrooms_options[0])
-# bathrooms_entry = ttk.Combobox(input_frame, textvariable=bathrooms_var, values=bathrooms_options)
-# bathrooms_entry.grid(row=4, column=1, padx=5, pady=5)
+tk.Label(root, text="Precio Maximo:").grid(row=3, column=0)
+price_max_entry = tk.Entry(root, validate="key", validatecommand=(root.register(lambda char: char.isdigit() or char == ""), "%S"))
+price_max_entry.grid(row=3, column=1)
 
-# parking_label = ttk.Label(input_frame, text="Parking Spaces:")
-# parking_label.grid(row=5, column=0, padx=5, pady=5, sticky="w")
-# parking_options = ["0", "1", "2", "3", "4"]
-# parking_var = tk.StringVar(value=parking_options[0])
-# parking_entry = ttk.Combobox(input_frame, textvariable=parking_var, values=parking_options)
-# parking_entry.grid(row=5, column=1, padx=5, pady=5)
+tk.Label(root, text="Dormitorios Minimos:").grid(row=4, column=0)
+bedrooms_entry = ttk.Combobox(root, textvariable=bedrooms_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+bedrooms_entry.grid(row=4, column=1)
 
+tk.Label(root, text="Banos Minimos:").grid(row=5, column=0)
+bathrooms_entry = ttk.Combobox(root, textvariable=bathrooms_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+bathrooms_entry.grid(row=5, column=1)
 
-# recommend_button = ttk.Button(input_frame, text="Obtener recomendaciones", command=get_recommendations)
-# recommend_button.grid(row=6, columnspan=3, pady=10)
+tk.Label(root, text="Estacionamientos Minimos:").grid(row=6, column=0)
+parking_entry = ttk.Combobox(root, textvariable=parking_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+parking_entry.grid(row=6, column=1)
 
-# results_frame = ttk.LabelFrame(root, text="Recomendacion")
-# results_frame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+recomendaciones_btn = tk.Button(root, text="Obtener Recomendaciones", command=get_recommendations)
+recomendaciones_btn.grid(row=7, column=0, columnspan=2, pady=10)
 
+#fachadas_btn = tk.Button(root, text="Mostrar Fachadas", command=mostrar_fachadas)
+#fachadas_btn.grid(row=8, column=0, columnspan=2, pady=10)
 
-# results_treeview = ttk.Treeview(results_frame, columns=("Index", "Comuna", "Realtor", "Price (USD)", "Bedrooms", "Bathrooms", "Parking", "Distance"))
-# results_treeview.heading("#1", text="Index")
-# results_treeview.heading("#2", text="Comuna")
-# results_treeview.heading("#3", text="Realtor")
-# results_treeview.heading("#4", text="Price (USD)")
-# results_treeview.heading("#5", text="Bedrooms")
-# results_treeview.heading("#6", text="Bathrooms")
-# results_treeview.heading("#7", text="Parking")
-# results_treeview.heading("#8", text="Distance")
-# results_treeview.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-
-
-# scrollbar = ttk.Scrollbar(results_frame, orient="vertical", command=results_treeview.yview)
-# scrollbar.grid(row=0, column=1, sticky="ns")
-# results_treeview.configure(yscrollcommand=scrollbar.set)
-
-# root.columnconfigure(0, weight=1)
-# root.rowconfigure(0, weight=1)
-# results_frame.columnconfigure(0, weight=1)
-# results_frame.rowconfigure(0, weight=1)
-
-# root.mainloop()
-
+root.main
