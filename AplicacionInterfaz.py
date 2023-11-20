@@ -375,11 +375,11 @@ parking_var = tk.StringVar()
 
 # Etiquetas y entradas para las opciones del usuario
 tk.Label(root, text="Comuna:").grid(row=0, column=0)
-comuna_entry = ttk.Combobox(root, textvariable=comuna_var, values=["PuenteAlto", "LasCondes", "QuintaNormal","PedroAguirreCerda", "EstacionCentral", "Colina","LaFlorida", "SanBernardo","Santiago", "LasCondes", "Lampa", "Quilicura"])
+comuna_entry = ttk.Combobox(root, textvariable=comuna_var, values=["Tiltil","SanMiguel","Talagante","Recoleta","Renca","Paine","Pirque","Melipilla","PadreHurtado","LoPrado","Macul","LaPintana","LoEspejo","LaCisterna","LaGranja","Independencia","IsladeMaipo","ElBosque","ElMonte","Cerrillos","CerroNavia","Buin","CaleradeTango","Pudahuel","Huechuraba","Providencia","LaReina","Vitacura","LoBarnechea","PuenteAlto", "LasCondes", "QuintaNormal","PedroAguirreCerda", "Colina","LaFlorida", "SanBernardo","Santiago", "LasCondes", "Lampa", "Quilicura"])
 comuna_entry.grid(row=0, column=1)
 
 tk.Label(root, text="Realtor:").grid(row=1, column=0)
-realtor_entry = ttk.Combobox(root, textvariable=realtor_var, values=["","Legale y Propiedades Spa", "Propiedadesrs", "Patricia Gajardo propiedades", "Todo Propiedades","Paula Vivanco Arenas", "Fe Propiedades Spa", "Ecorredores Getion Inmobiliaria","Behouse", "Propital", "Cgs Corretaje Inmobiliario Spa", "Giordano Propiedades"])
+realtor_entry = ttk.Combobox(root, textvariable=realtor_var, values=["","Viel la Dehesa SPA","Viel Propiedades dos Ltda","Schumacher Propiedades","OSSANDON CORREDORES ASOCIADOS S.A","Easyprop","Lyon y Balmaceda Ltda.","Bofill y Asociados Ltda","Nieto & Stone Propiedades","Invistus Spa","Unne","Hobbins Vitacura","Welink Propiedades SpA","Vidal Riedel Propiedades - Las Condes","Nexxos","Mocahome Corredores Integrados","Manterola Propiedades","Tzani Propiedades","Legale y Propiedades Spa", "Propiedadesrs", "Patricia Gajardo propiedades", "Todo Propiedades","Paula Vivanco Arenas", "Fe Propiedades Spa", "Ecorredores Getion Inmobiliaria","Behouse", "Propital", "Cgs Corretaje Inmobiliario Spa", "Giordano Propiedades"])
 realtor_entry.grid(row=1, column=1)
 
 tk.Label(root, text="Precio Minimo:").grid(row=2, column=0)
