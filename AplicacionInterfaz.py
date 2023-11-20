@@ -68,88 +68,6 @@ def dijkstra(grafo, inicio,comuna,realtor, precio_min, precio_max, dorms_min, ba
     return recomendations_sorted[:20] #retorna los 20 primeros elementos                                                                                                                                                !!!!!!!!!!!!!!!!!!!!!!
 
 
-def obtener_recomendaciones():
-    
-    # -*- coding: utf-8 -*-
-    #comuna es para calcular el nodo inicio
-    #Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones min, baños min y parking min
-    comuna_deseada = "LasCondes"                     #-> OBLIGATORIO!!!!
-    realtor_deseado = ""           #->pasar como comillas sin espacio "" si es que no recibe nada
-    precio_minimo_deseado = 1000                 #-> OBLIGATORIO!!!!   
-    precio_maximo_deseado = 800000             #-> OBLIGATORIO!!!!
-    habitaciones_min_deseadas=1                  #-> pasar como 0 si no recibe nada
-    banos_min_deseados= 1                        #-> pasar como 0 si no recibe nada
-    parking_min_deseado= 2                       #-> pasar como 0 si no recibe nada
-    
-    global casas_cercanas
-    global inicio
-    
-    # Buscar el nodo de inicio en base a la comuna
-    inicio = None
-    for nodo in grafo.nodos:
-       if grafo.nodos[nodo]['comuna'] == comuna_deseada:
-            inicio = nodo
-            break
-
-    # Verificar si se encontró el nodo de inicio
-    if inicio is None:
-        print("la casa inicio no se encontro en el grafo")
-    else:
-        # Utilizar el algoritmo de Dijkstra para encontrar las distancias y filtrar por comuna
-        casas_cercanas = dijkstra(grafo, inicio, comuna_deseada,realtor_deseado, precio_minimo_deseado,precio_maximo_deseado,habitaciones_min_deseadas,banos_min_deseados,parking_min_deseado)
-        #print("Imprimir el arreglo")
-        #print(casas_cercanas)
-        #print("Antes de mostrar los resultados")
-        mostrar_resultados(casas_cercanas, comuna_deseada)
-
-
-
-# Función para mostrar los casas recomendados como "cards"
-def mostrar_resultados(casas_cercanas, comuna_inicio):
-
-    print(f"Las casas mas recomendadas en relacion a la comuna {comuna_inicio}:\n")
-    
-    print(casas_cercanas)
-    print("\n")
-
-    for i, (casa, distancia) in enumerate(casas_cercanas):
-
-    #comuna es para calcular el nodo inicio
-    # Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones, baños y parking
-        print(f"Indice: {grafo.nodos[casa]['id']}")
-        print(f"Comuna: {grafo.nodos[casa]['comuna']}")
-        print(f"Realtor: {grafo.nodos[casa]['realtor']}")
-        print(f"Precio en dolares: {grafo.nodos[casa]['price_usd']}")
-        print(f"Habitaciones: {grafo.nodos[casa]['dorms']}")
-        print(f"Banos: {grafo.nodos[casa]['baths']}")
-        print(f"Parking: {grafo.nodos[casa]['parking']}")
-        print(f"Descuento: {grafo.nodos[casa]['desc']}")
-        print(f"Distancia: {distancia}")
-        print("\n")
-    
-                                                                                                                                                                                                    #!!!!!!!!!!!!!!!!!!!!!!
-    #filtrar por distancia                
-    print("CASAS FILTRADAS")
-    print("\n")
-    casas_filtradas= filtrar_por_atributo(casas_cercanas,"total_area")
-    
-    for casa in casas_filtradas:
-
-    #comuna es para calcular el nodo inicio
-    # Filtrar las casas según las preferencias de realtor, rango de precios, habitaciones, baños y parking
-        print(f"Indice: {grafo.nodos[casa]['id']}")
-        print(f"Comuna: {grafo.nodos[casa]['comuna']}")
-        print(f"Realtor: {grafo.nodos[casa]['realtor']}")
-        print(f"Precio en dolares: {grafo.nodos[casa]['price_usd']}")
-        print(f"Habitaciones: {grafo.nodos[casa]['dorms']}")
-        print(f"Banos: {grafo.nodos[casa]['baths']}")
-        print(f"Parking: {grafo.nodos[casa]['parking']}")
-        print(f"Total Area (m^2): {grafo.nodos[casa]['total_area']}")
-        print(f"Descuento: {grafo.nodos[casa]['desc']}")
-        print("\n")
-    
-    
-
 def filtrar_por_atributo(recommendations, filtro):
     # Filtrar según el criterio especificado en el filtro
     if filtro == "dorms":
@@ -379,7 +297,7 @@ comuna_entry = ttk.Combobox(root, textvariable=comuna_var, values=["Tiltil","San
 comuna_entry.grid(row=0, column=1)
 
 tk.Label(root, text="Realtor:").grid(row=1, column=0)
-realtor_entry = ttk.Combobox(root, textvariable=realtor_var, values=["","Viel la Dehesa SPA","Viel Propiedades dos Ltda","Schumacher Propiedades","OSSANDON CORREDORES ASOCIADOS S.A","Easyprop","Lyon y Balmaceda Ltda.","Bofill y Asociados Ltda","Nieto & Stone Propiedades","Invistus Spa","Unne","Hobbins Vitacura","Welink Propiedades SpA","Vidal Riedel Propiedades - Las Condes","Nexxos","Mocahome Corredores Integrados","Manterola Propiedades","Tzani Propiedades","Legale y Propiedades Spa", "Propiedadesrs", "Patricia Gajardo propiedades", "Todo Propiedades","Paula Vivanco Arenas", "Fe Propiedades Spa", "Ecorredores Getion Inmobiliaria","Behouse", "Propital", "Cgs Corretaje Inmobiliario Spa", "Giordano Propiedades"])
+realtor_entry = ttk.Combobox(root, textvariable=realtor_var, values=["","Viel la Dehesa SPA","Viel Propiedades dos Ltda","Schumacher Propiedades","OSSANDON CORREDORES ASOCIADOS S.A","Easyprop","Lyon y Balmaceda Ltda.","Bofill y Asociados Ltda","Nieto & Stone Propiedades","Invictus Spa","Unne","Hobbins Vitacura","Welink Propiedades SpA","Vidal Riedel Propiedades - Las Condes","Nexxos","Mocahome Corredores Integrados","Manterola Propiedades","Tzani Propiedades","Legale y Propiedades Spa", "Propiedadesrs", "Patricia Gajardo propiedades", "Todo Propiedades","Paula Vivanco Arenas", "Fe Propiedades Spa", "Ecorredores Getion Inmobiliaria","Behouse", "Propital", "Cgs Corretaje Inmobiliario Spa", "Giordano Propiedades"])
 realtor_entry.grid(row=1, column=1)
 
 tk.Label(root, text="Precio Minimo:").grid(row=2, column=0)
@@ -391,29 +309,19 @@ price_max_entry = tk.Entry(root, validate="key", validatecommand=(root.register(
 price_max_entry.grid(row=3, column=1)
 
 tk.Label(root, text="Dormitorios Minimos:").grid(row=4, column=0)
-bedrooms_entry = ttk.Combobox(root, textvariable=bedrooms_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+bedrooms_entry = ttk.Combobox(root, textvariable=bedrooms_var, values=["0","1", "2", "3","4", "5", "6","7","8","9","10","11","12","13","14","15","16"])
 bedrooms_entry.grid(row=4, column=1)
 
 tk.Label(root, text="Banos Minimos:").grid(row=5, column=0)
-bathrooms_entry = ttk.Combobox(root, textvariable=bathrooms_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+bathrooms_entry = ttk.Combobox(root, textvariable=bathrooms_var, values=["0","1", "2", "3","4", "5", "6","7","8","9","10","11","12"])
 bathrooms_entry.grid(row=5, column=1)
 
 tk.Label(root, text="Estacionamientos Minimos:").grid(row=6, column=0)
-parking_entry = ttk.Combobox(root, textvariable=parking_var, values=["0","1", "2", "3","4", "5", "6","7", "   "])
+parking_entry = ttk.Combobox(root, textvariable=parking_var, values=["0","1", "2", "3","4", "5", "6","7","8","9","10","11","12","13","14","15","16","17","20"])
 parking_entry.grid(row=6, column=1)
 
 recomendaciones_btn = tk.Button(root, text="Obtener Recomendaciones", command=get_recommendations)
 recomendaciones_btn.grid(row=7, column=0, columnspan=2, pady=10)
-
-# Crear el widget Treeview para mostrar las recomendaciones
-columns = ('#', 'Comuna', 'Realtor', 'Precio USD', 'Dormitorios', 'Banos', 'Estacionamientos', 'Distancia')
-treeview = ttk.Treeview(root, columns=columns, show='headings')
-
-# Configurar las columnas
-for col in columns:
-    treeview.heading(col, text=col)
-
-treeview.grid(row=9, column=0, columnspan=2)
 
 atributo_var = tk.StringVar()
 atributo_var.set("todo") 
